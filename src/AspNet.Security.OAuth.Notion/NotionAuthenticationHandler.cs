@@ -58,11 +58,11 @@ namespace AspNet.Security.OAuth.Notion
             using var response = await Backchannel.SendAsync(requestMessage, Context.RequestAborted);
             if (response.IsSuccessStatusCode)
             {
-                var payload = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+                var payload = JsonDocument.Parse(await response.Content.ReadAsStringAsync(Context.RequestAborted));
                 return OAuthTokenResponse.Success(payload);
             }
 
-            var error = "OAuth token endpoint failure: " + await DisplayAsync(response);
+            var error = "OAuth token endpoint failure: " + await DisplayAsync(response, Context.RequestAborted);
             return OAuthTokenResponse.Failed(new Exception(error));
         }
 
@@ -87,12 +87,12 @@ namespace AspNet.Security.OAuth.Notion
             return new AuthenticationTicket(context.Principal!, context.Properties, Scheme.Name);
         }
 
-        private static async Task<string> DisplayAsync(HttpResponseMessage response)
+        private static async Task<string> DisplayAsync(HttpResponseMessage response, CancellationToken cancellationToken)
         {
             var output = new StringBuilder();
             output.Append("Status: ").Append(response.StatusCode).Append(';');
             output.Append("Headers: ").Append(response.Headers).Append(';');
-            output.Append("Body: ").Append(await response.Content.ReadAsStringAsync()).Append(';');
+            output.Append("Body: ").Append(await response.Content.ReadAsStringAsync(cancellationToken)).Append(';');
             return output.ToString();
         }
     }

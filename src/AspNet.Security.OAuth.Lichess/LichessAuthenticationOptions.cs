@@ -15,6 +15,8 @@ namespace AspNet.Security.OAuth.Lichess
     {
         public LichessAuthenticationOptions()
         {
+            UsePkce = true;
+
             ClaimsIssuer = LichessAuthenticationDefaults.Issuer;
             CallbackPath = LichessAuthenticationDefaults.CallbackPath;
 
